@@ -1,6 +1,22 @@
-{% extends "base.html" %}
-
-{% block content %}
-  <h1>Welcome to Kubernetes RBAC Manager</h1>
-  <p><a href="{{ url_for('create_role') }}">Create a new role</a></p>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Kubernetes RBAC Manager</h1>
+    </header>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <a href="{{ url_for('create_role') }}">Create a Role</a>
+    </div>
+</body>
+</html>

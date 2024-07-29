@@ -1,14 +1,24 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Role</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Create a Kubernetes Role</h1>
+    </header>
+    <div class="container">
+        <form method="POST">
+            <label for="role_name">Role Name:</label>
+            <input type="text" id="role_name" name="role_name" required>
 
-{% block content %}
-  <h1>Create a Kubernetes Role</h1>
-  <form method="post">
-    <div class="form-group">
-      <label for="role_name">Role Name:</label>
-      <input type="text" id="role_name" name="role_name" required>
+            <label for="namespace">Namespace:</label>
+            <input type="text" id="namespace" name="namespace" required>
+
+            <button type="submit">Create Role</button>
+        </form>
+        <a href="{{ url_for('index') }}">Back to Home</a>
     </div>
-    <div class="form-group">
-      <input type="submit" value="Create Role">
-    </div>
-  </form>
-{% endblock %}
+</body>
+</html>
