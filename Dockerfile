@@ -20,7 +20,9 @@ COPY . .
 
 # Ensure the .kube directory exists and copy the kubeconfig file
 RUN mkdir -p /root/.kube
-COPY ~/.kube/config /root/.kube/config
+
+# Copy kubeconfig from the build context to the image
+COPY kubeconfig /root/.kube/config
 
 # Expose the port the app runs on
 EXPOSE 5000
