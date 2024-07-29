@@ -13,10 +13,19 @@ def load_kube_config():
         print(f"Error loading kube config: {e}")
 
 # Create a Kubernetes role
-def create_role(namespace, role_name, rules):
+def create_role(namespace, role_name, api_groups, resources, verbs):
     try:
         load_kube_config()
         k8s_rbac_api = client.RbacAuthorizationV1Api()
+
+        # Define role rules
+        rules = [
+            client.V1PolicyRule(
+                api_groups=api_groups,
+                resources=resources,
+                verbs=verbs
+            )
+        ]
 
         # Define role
         role = client.V1Role(
@@ -38,24 +47,18 @@ def index():
     if request.method == 'POST':
         namespace = request.form['namespace']
         role_name = request.form['role_name']
-        rules = request.form['rules']
+        api_groups = request.form.getlist('api_groups')
+        resources = request.form.getlist('resources')
+        verbs = request.form.getlist('verbs')
 
-        # Convert rules from string to a list of dictionaries
-        try:
-            rules_list = eval(rules)  # Use eval to convert string to list of dicts
-            if not isinstance(rules_list, list):
-                raise ValueError("Rules must be a list of dictionaries")
-
-            # Create the role
-            success = create_role(namespace, role_name, rules_list)
-            if success:
-                flash('Role created successfully!', 'success')
-            else:
-                flash('Failed to create role.', 'error')
-        except Exception as e:
-            flash(f'Error: {e}', 'error')
+        # Create the role
+        success = create_role(namespace, role_name, api_groups, resources, verbs)
+        if success:
+            flash('Role created successfully!', 'success')
+        else:
+            flash('Failed to create role.', 'error')
 
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5000)
