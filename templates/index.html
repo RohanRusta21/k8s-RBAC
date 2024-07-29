@@ -2,32 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kubernetes Role Manager</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Kubernetes Role Creator</title>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Kubernetes Role Manager</h1>
-        <form method="post">
-            <div class="form-group">
-                <label for="namespace">Namespace:</label>
-                <input type="text" class="form-control" id="namespace" name="namespace" required>
-            </div>
-            <div class="form-group">
-                <label for="role-name">Role Name:</label>
-                <input type="text" class="form-control" id="role-name" name="role-name" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Create Role</button>
-        </form>
-        <div class="mt-4">
-            <p class="text-danger">{{ error }}</p>
-            <p class="text-success">{{ success }}</p>
-        </div>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <h1>Create Kubernetes Role</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
+    <form action="{{ url_for('create_role') }}" method="post">
+        <label for="namespace">Namespace:</label>
+        <input type="text" id="namespace" name="namespace" required><br><br>
+        <label for="role_name">Role Name:</label>
+        <input type="text" id="role_name" name="role_name" required><br><br>
+        <label for="rules">Rules (JSON format):</label>
+        <textarea id="rules" name="rules" rows="4" cols="50" required></textarea><br><br>
+        <input type="submit" value="Create Role">
+    </form>
 </body>
 </html>
