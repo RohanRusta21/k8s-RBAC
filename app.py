@@ -1,45 +1,37 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template
 from kubernetes import client, config
+import os
 
 app = Flask(__name__)
-app.secret_key = 'rohan123'  # This is required for flashing messages
 
-# Load Kubernetes configuration
-config.load_kube_config()
+def load_kube_config():
+    # Check if the KUBECONFIG environment variable is set
+    kubeconfig_path = os.getenv('KUBECONFIG', '/root/.kube/config')
+    
+    if not os.path.isfile(kubeconfig_path):
+        raise FileNotFoundError(f"Kubeconfig file not found at {kubeconfig_path}")
+    
+    # Load kubeconfig file
+    config.load_kube_config(config_file=kubeconfig_path)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@app.route('/create_role', methods=['GET', 'POST'])
-def create_role():
-    if request.method == 'POST':
-        role_name = request.form['role_name']
-        namespace = request.form['namespace']
+    try:
+        # Load the kubeconfig
+        load_kube_config()
         
-        # Create Kubernetes API client
-        rbac_api = client.RbacAuthorizationV1Api()
-
-        # Define role object
-        role = client.V1Role(
-            metadata=client.V1ObjectMeta(name=role_name),
-            rules=[client.V1PolicyRule(
-                api_groups=["*"],
-                resources=["*"],
-                verbs=["*"]
-            )]
-        )
-
-        try:
-            # Create role in the specified namespace
-            rbac_api.create_namespaced_role(namespace=namespace, body=role)
-            flash(f'Role "{role_name}" created successfully in namespace "{namespace}".', 'success')
-        except client.exceptions.ApiException as e:
-            flash(f'Error creating role: {e}', 'danger')
+        # Example of accessing Kubernetes resources
+        v1 = client.CoreV1Api()
+        pods = v1.list_pod_for_all_namespaces(watch=False)
         
-        return redirect(url_for('index'))
-    
-    return render_template('create_role.html')
+        # Example: Print pod names (You can modify this to display data in the template)
+        pod_names = [pod.metadata.name for pod in pods.items]
+        
+        return render_template('index.html', pod_names=pod_names)
+    except FileNotFoundError as e:
+        return f"Error: {str(e)}", 500
+    except Exception as e:
+        return f"An unexpected error occurred: {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
