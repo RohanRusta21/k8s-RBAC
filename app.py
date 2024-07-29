@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template
+from flask import Flask, request, jsonify, send_from_directory
 from kubernetes import client, config
 import os
 
@@ -11,7 +11,6 @@ def load_kube_config():
     # Load kubeconfig and disable SSL verification if needed
     config.load_kube_config(config_file=kubeconfig_path, verify_ssl=False)
 
-@app.before_first_request
 def initialize_kube_client():
     try:
         load_kube_config()
@@ -21,21 +20,17 @@ def initialize_kube_client():
         app.logger.error(f"Error loading kube config: {e}")
         raise
 
-@app.route('/')
+@app.get('/')
 def index():
-    return render_template('index.html')
+    initialize_kube_client()
+    return 'Kubernetes Role Manager is ready!'
 
-@app.route('/create_role', methods=['POST'])
+@app.post('/create_role')
 def create_role():
     try:
-        role_name = request.form.get('role-name')
-        namespace = request.form.get('namespace')
-
-        role_definition = {
-            'name': role_name,
-            'namespace': namespace,
-            'rules': []  # Replace with actual rules if needed
-        }
+        # Get role definition from request
+        role_definition = request.json
+        namespace = role_definition.get('namespace', 'default')
 
         # Create the role
         role = client.V1Role(
