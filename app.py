@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
 from kubernetes import client, config
+import os
 
 app = Flask(__name__)
 app.secret_key = 's3cr3t_k3y'  # Change this to a secure key
@@ -8,7 +9,8 @@ app.secret_key = 's3cr3t_k3y'  # Change this to a secure key
 def load_kube_config():
     try:
         # Load the kube config from the default location or set your own path here
-        config.load_kube_config()
+        kubeconfig_path = os.path.expanduser("~/.kube/config")
+        config.load_kube_config(config_file=kubeconfig_path)
     except Exception as e:
         print(f"Error loading kube config: {e}")
 
