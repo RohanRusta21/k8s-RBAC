@@ -3,57 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kubernetes Role Creator</title>
+    <title>Create Kubernetes Role</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Create Kubernetes Role</h1>
-    <form method="POST">
-        <label for="namespace">Namespace:</label>
-        <input type="text" id="namespace" name="namespace" required>
-        <br>
-        <label for="role_name">Role Name:</label>
-        <input type="text" id="role_name" name="role_name" required>
-        <br>
-        <label for="api_groups">API Groups:</label>
-        <select id="api_groups" name="api_groups" multiple required>
-            <option value="">Core API</option>
-            <option value="apps">apps</option>
-            <option value="batch">batch</option>
-            <option value="extensions">extensions</option>
-            <!-- Add more options as needed -->
-        </select>
-        <br>
-        <label for="resources">Resources:</label>
-        <select id="resources" name="resources" multiple required>
-            <option value="pods">pods</option>
-            <option value="services">services</option>
-            <option value="deployments">deployments</option>
-            <!-- Add more options as needed -->
-        </select>
-        <br>
-        <label for="verbs">Verbs:</label>
-        <select id="verbs" name="verbs" multiple required>
-            <option value="get">get</option>
-            <option value="list">list</option>
-            <option value="create">create</option>
-            <option value="delete">delete</option>
-            <option value="update">update</option>
-            <option value="watch">watch</option>
-            <!-- Add more options as needed -->
-        </select>
-        <br>
-        <input type="submit" value="Create Role">
-    </form>
-    <br>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <div class="container">
+        <h1>Create Kubernetes Role</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="namespace">Namespace:</label>
+                <input type="text" id="namespace" name="namespace" required>
+            </div>
+            <div class="form-group">
+                <label for="role_name">Role Name:</label>
+                <input type="text" id="role_name" name="role_name" required>
+            </div>
+            <div class="form-group">
+                <label for="api_groups">API Groups:</label>
+                <select id="api_groups" name="api_groups" multiple>
+                    <option value="">Default</option>
+                    <option value="apps">apps</option>
+                    <option value="batch">batch</option>
+                    <option value="extensions">extensions</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="resources">Resources:</label>
+                <select id="resources" name="resources" multiple>
+                    <option value="pods">pods</option>
+                    <option value="services">services</option>
+                    <option value="deployments">deployments</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="verbs">Verbs:</label>
+                <select id="verbs" name="verbs" multiple>
+                    <option value="get">get</option>
+                    <option value="list">list</option>
+                    <option value="watch">watch</option>
+                    <option value="create">create</option>
+                    <option value="update">update</option>
+                    <option value="delete">delete</option>
+                </select>
+            </div>
+            <button type="submit">Create Role</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
 </body>
 </html>
