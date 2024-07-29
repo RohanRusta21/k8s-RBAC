@@ -18,8 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code
 COPY . .
 
-# If you have a kubeconfig file, you can add it here
-# COPY path/to/your/kubeconfig /root/.kube/config
+# Ensure the .kube directory exists and copy the kubeconfig file
+RUN mkdir -p /root/.kube
+COPY ~/.kube/config /root/.kube/config
 
 # Expose the port the app runs on
 EXPOSE 5000
