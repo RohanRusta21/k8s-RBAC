@@ -28,14 +28,14 @@ def index():
 @app.route('/create_role', methods=['POST'])
 def create_role():
     try:
-        # Get role definition from request
+        role_name = request.form.get('role-name')
+        namespace = request.form.get('namespace')
+
         role_definition = {
-            'name': request.form.get('role-name'),
-            'namespace': request.form.get('namespace'),
+            'name': role_name,
+            'namespace': namespace,
             'rules': []  # Replace with actual rules if needed
         }
-
-        namespace = role_definition.get('namespace', 'default')
 
         # Create the role
         role = client.V1Role(
