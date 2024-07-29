@@ -1,2 +1,2 @@
-Flask==2.3.4
-kubernetes==26.1.1
+Flask
+kubernetes
