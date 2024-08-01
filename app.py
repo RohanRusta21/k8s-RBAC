@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 # Load Kubernetes configuration
 def load_kube_config():
-    kube_config_path = '/root/.kube/config'
+    kube_config_path = os.getenv('KUBECONFIG', '~/.kube/config')
+    kube_config_path = os.path.expanduser(kube_config_path)
     if os.path.exists(kube_config_path):
         config.load_kube_config(config_file=kube_config_path)
     else:
