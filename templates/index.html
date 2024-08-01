@@ -12,15 +12,13 @@
     {% if message %}
         <p style="color: green;">{{ message }}</p>
     {% endif %}
-    <form action="{{ url_for('create_role') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ url_for('create_role') }}" method="post">
         <label for="namespace">Namespace:</label>
         <input type="text" id="namespace" name="namespace" required><br><br>
         <label for="role_name">Role Name:</label>
         <input type="text" id="role_name" name="role_name" required><br><br>
         <label for="rules">Rules (JSON format):</label>
         <textarea id="rules" name="rules" rows="4" cols="50" required></textarea><br><br>
-        <label for="kubeconfig">Kubeconfig File:</label>
-        <input type="file" id="kubeconfig" name="kubeconfig" required><br><br>
         <input type="submit" value="Create Role">
     </form>
 </body>
