@@ -2,16 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for
 from kubernetes import client, config
 import os
 import json
-import tempfile
 
 app = Flask(__name__)
 
 # Load Kubernetes configuration
-def load_kube_config(kubeconfig_path):
-    if os.path.exists(kubeconfig_path):
-        config.load_kube_config(config_file=kubeconfig_path)
+def load_kube_config():
+    kube_config_path = os.getenv('KUBECONFIG', '~/.kube/config')
+    kube_config_path = os.path.expanduser(kube_config_path)
+    if os.path.exists(kube_config_path):
+        config.load_kube_config(config_file=kube_config_path)
     else:
-        raise FileNotFoundError(f"Kube config file not found at {kubeconfig_path}")
+        raise FileNotFoundError(f"Kube config file not found at {kube_config_path}")
 
 @app.route('/')
 def index():
@@ -22,16 +23,9 @@ def create_role():
     namespace = request.form['namespace']
     role_name = request.form['role_name']
     rules_json = request.form['rules']
-    kubeconfig_file = request.files['kubeconfig']
 
     try:
-        # Save the uploaded kubeconfig file to a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.kubeconfig') as temp_kubeconfig:
-            temp_kubeconfig.write(kubeconfig_file.read())
-            temp_kubeconfig_path = temp_kubeconfig.name
-
-        # Load the kubeconfig file
-        load_kube_config(temp_kubeconfig_path)
+        load_kube_config()
 
         v1 = client.RbacAuthorizationV1Api()
 
@@ -48,10 +42,6 @@ def create_role():
         )
 
         v1.create_namespaced_role(namespace=namespace, body=role)
-
-        # Remove the temporary kubeconfig file
-        os.remove(temp_kubeconfig_path)
-
         return redirect(url_for('index', message='Role created successfully'))
     except Exception as e:
         return render_template('index.html', error=str(e))
